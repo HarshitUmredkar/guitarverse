@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11110f">
+  <meta name="description" content="Your private, offline-first guitar songbook.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>GUITARVERSE — Your Guitar Book</title>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Guitarverse home">
+        <span class="brand-mark">G<span>V</span></span>
+        <span><strong>GUITARVERSE</strong><small>YOUR PERSONAL GUITAR BOOK</small></span>
+      </a>
+      <button class="icon-btn" id="installBtn" hidden title="Install app">↓</button>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">YOUR MUSIC. YOUR JOURNEY.</p>
+          <h1>Every song has<br><em>a place here.</em></h1>
+          <p class="hero-copy">A private space for the songs you actually play.</p>
+        </div>
+        <div class="hero-art" aria-hidden="true"><span>♪</span><i>♫</i><b>♬</b></div>
+      </section>
+
+      <section class="finder-banner">
+        <div class="finder-copy">
+          <p class="eyebrow">DISCOVER A SONG</p>
+          <h2>Let AI find your chord sheet.</h2>
+          <p>Search a song, review the source-backed result, then save it to your book.</p>
+        </div>
+        <button class="primary-btn" id="openFinderBtn">⌕ Find a song</button>
+      </section>
+
+      <section class="stats-grid" aria-label="Your progress">
+        <div class="stat-card"><span class="stat-label">PLAYED</span><strong id="playedCount">0</strong><small>songs mastered</small></div>
+        <div class="stat-card"><span class="stat-label">IN YOUR BOOK</span><strong id="totalCount">0</strong><small>songs saved</small></div>
+        <div class="stat-card"><span class="stat-label">FAVOURITES</span><strong id="favoriteCount">0</strong><small>your go-tos</small></div>
+      </section>
+
+      <section class="section-head">
+        <div><p class="eyebrow">THE COLLECTION</p><h2>Your songbook</h2></div>
+        <button class="primary-btn" id="addSongBtn"><span>＋</span> Add song</button>
+      </section>
+
+      <div class="toolbar">
+        <label class="searchbox"><span>⌕</span><input id="searchInput" type="search" placeholder="Search your songs..." autocomplete="off"></label>
+        <div class="filter-row" role="group" aria-label="Filter songs">
+          <button class="filter-chip active" data-filter="all">All</button>
+          <button class="filter-chip" data-filter="played">Played</button>
+          <button class="filter-chip" data-filter="pending">To learn</button>
+          <button class="filter-chip" data-filter="favorites">♥</button>
+        </div>
+      </div>
+
+      <section id="songList" class="song-list" aria-live="polite"></section>
+      <section id="emptyState" class="empty-state">
+        <div class="empty-icon">♫</div><h3>Your songbook starts here</h3>
+        <p>Add a song after you've played it—or save one you're learning. Nothing is imported automatically.</p>
+        <button class="primary-btn" id="emptyAddBtn">＋ Add your first song</button>
+      </section>
+
+      <section class="tools-section">
+        <div class="section-head compact"><div><p class="eyebrow">PRACTICE ROOM</p><h2>Guitar tools</h2></div></div>
+        <div class="tool-grid">
+          <button class="tool-card" data-tool="metronome"><span class="tool-icon">◷</span><strong>Metronome</strong><small>Keep your timing</small></button>
+          <button class="tool-card" data-tool="transpose"><span class="tool-icon">♯</span><strong>Transpose</strong><small>Change song key</small></button>
+          <button class="tool-card" data-tool="chords"><span class="tool-icon">⌁</span><strong>Chord library</strong><small>Quick chord shapes</small></button>
+          <button class="tool-card" data-tool="tuner"><span class="tool-icon">♫</span><strong>Guitar tuner</strong><small>Use your microphone</small></button>
+        </div>
+      </section>
+
+      <section class="backup-strip">
+        <div><strong>Your songs stay on this device.</strong><p>Export a backup regularly so you never lose your book.</p></div>
+        <div class="backup-actions"><button class="secondary-btn" id="exportBtn">Export backup</button><button class="text-btn" id="importBtn">Restore</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+      </section>
+    </main>
+    <footer><span>GUITARVERSE</span><span>MADE FOR THE MUSIC IN YOU · OFFLINE READY</span></footer>
+  </div>
+
+  <dialog id="songDialog" class="modal">
+    <form id="songForm" method="dialog">
+      <div class="modal-head"><div><p class="eyebrow">YOUR COLLECTION</p><h2 id="songDialogTitle">Add a song</h2></div><button type="button" class="close-btn" data-close="songDialog">×</button></div>
+      <input type="hidden" id="songId">
+      <div class="form-grid">
+        <label class="field wide"><span>Song title *</span><input id="title" required maxlength="100" placeholder="e.g. Aadat"></label>
+        <label class="field"><span>Singer / artist</span><input id="artist" maxlength="100" placeholder="Artist name"></label>
+        <label class="field"><span>Difficulty</span><select id="difficulty"><option>Beginner</option><option selected>Intermediate</option><option>Advanced</option></select></label>
+        <label class="field"><span>Original key</span><select id="key"><option value="">Not set</option><option>C</option><option>C#</option><option>D</option><option>D#</option><option>E</option><option>F</option><option>F#</option><option>G</option><option>G#</option><option>A</option><option>A#</option><option>B</option></select></label>
+        <label class="field"><span>Capo position</span><select id="capo"><option value="">Not set</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></label>
+        <label class="field"><span>BPM</span><input id="bpm" type="number" min="30" max="300" placeholder="e.g. 92"></label>
+        <label class="field"><span>Strumming pattern</span><input id="strumming" placeholder="e.g. D DU UDU"></label>
+        <label class="field wide"><span>Chords / progression</span><input id="chords" placeholder="e.g. Am – F – C – G"></label>
+        <label class="field wide"><span>Your lyrics / chord sheet</span><textarea id="lyrics" rows="5" placeholder="Add lyrics or your own chord placement here..."></textarea></label>
+        <label class="field wide"><span>Personal notes / arrangement</span><textarea id="notes" rows="3" placeholder="Your intro, fingerpicking, reminders..."></textarea></label>
+        <label class="check-field"><input id="played" type="checkbox"><span>I've played this song in real life</span></label>
+        <label class="check-field"><input id="favorite" type="checkbox"><span>Add to favourites</span></label>
+        <label class="field" id="playedDateWrap"><span>Played date</span><input id="playedDate" type="date"></label>
+      </div>
+      <div class="modal-actions"><button type="button" class="secondary-btn" data-close="songDialog">Cancel</button><button type="submit" class="primary-btn">Save song</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="finderDialog" class="modal finder-modal">
+    <div class="modal-head">
+      <div><p class="eyebrow">AI-POWERED SEARCH</p><h2>Song Finder</h2></div>
+      <button type="button" class="close-btn" data-close="finderDialog">×</button>
+    </div>
+    <p class="finder-intro">Search by song and artist. GUITARVERSE will look for source-backed chord information. Full lyrics are imported only when the source permits it.</p>
+    <div class="finder-search-row">
+      <input id="finderQuery" type="search" placeholder="e.g. Aadat — Atif Aslam" autocomplete="off">
+      <button class="secondary-btn" id="voiceSearchBtn" type="button" title="Voice search">🎙</button>
+      <button class="primary-btn" id="finderSearchBtn" type="button">Search</button>
+    </div>
+    <details class="finder-settings">
+      <summary>Connection settings</summary>
+      <label class="field"><span>Cloudflare Worker URL</span><input id="finderEndpoint" type="url" placeholder="https://your-worker.your-subdomain.workers.dev"></label>
+      <small>Set this once after deploying the included worker. It is saved only in this browser.</small>
+      <button class="text-btn" id="saveFinderEndpoint" type="button">Save connection</button>
+    </details>
+    <div id="finderStatus" class="finder-status" role="status">Enter a song name to begin.</div>
+    <div id="finderResults" class="finder-results"></div>
+  </dialog>
+
+  <dialog id="detailDialog" class="modal detail-modal">
+    <div id="detailContent"></div>
+  </dialog>
+
+  <dialog id="toolDialog" class="modal tool-modal">
+    <div id="toolContent"></div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
